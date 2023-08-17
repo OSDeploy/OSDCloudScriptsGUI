@@ -146,6 +146,11 @@
                 <RowDefinition Height="1" />
                 <!-- Row 10 Start Button -->
                 <RowDefinition Height="Auto" />
+                <!-- Row 11 GridLine -->
+                <RowDefinition Height="Auto" />
+                <!-- Row 12 Parameters-->
+                <RowDefinition Height="Auto" />
+
             </Grid.RowDefinitions>
 
 <!-- Row 0 -->
@@ -296,6 +301,23 @@
                 Width="130"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom" />
+<!-- Row 11 GridLine-->
+            <Line Grid.Row="11"
+                X1="0"
+                Y1="0"
+                X2="1"
+                Y2="0"
+                Stroke="Gainsboro"
+                StrokeThickness="2"
+                Stretch="Uniform"></Line>
+            <!-- Row 8 -->
+            <StackPanel Grid.Row="12"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+                <StackPanel Name="Parameters"  Orientation="Horizontal" VerticalAlignment="Top">
+                </StackPanel>
+            </StackPanel>
+
         </Grid>
     </DockPanel>
 </Window>

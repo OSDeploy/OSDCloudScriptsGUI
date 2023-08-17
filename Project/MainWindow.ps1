@@ -321,6 +321,78 @@ function Set-ScriptContent {
     }
 }
 
+Function NewStackPanelControl(){
+
+    Param(
+        [String]$name,
+        [int]$number
+    )
+
+    $Stackpanel = [System.Windows.Controls.StackPanel]::new()
+    $Stackpanel.Name = "Parameter"
+    $Stackpanel.Orientation = "horizontal"
+    $Stackpanel.Margin  = "5,5,5,5"
+    $Stackpanel.Width   = "250"
+    $Stackpanel.Height  = "140"
+	
+    $Label= [System.Windows.Controls.Label]::new()
+    $Label.Content = $name.Substring(1)
+    #$Label.Foreground="#6DA1EC" 
+    $Label.Margin="0,2,0,2" 
+    $Label.HorizontalAlignment="Center"
+
+    $TextBox = [System.Windows.Controls.TextBox]::new()
+    $TextBox.Name = $name.Substring(1)
+    $TextBox.Margin="0,5,0,2" 
+    $TextBox.TextWrapping="Wrap"
+    $TextBox.Width   = "120"
+    $TextBox.Height  = "40"
+    $TextBox.HorizontalAlignment="Center"
+
+    # try to add the new dynamic controls to the variable scope but don't work 
+    
+    try {
+        $controls = @()
+$xp = '[^a-zA-Z_0-9]' # All characters that are not a-Z, 0-9, or _
+foreach($x in $vx)
+{
+    $xaml = (Get-Variable -Name "xaml$($x)").Value #load the xaml we created earlier
+    $xaml.SelectNodes("//*[@Name]") | %{ #find all nodes with a "Name" attribute
+        $cname = "form$($x)Control$(($_.Name -replace $xp, '_'))"
+        Set-Variable -Name "$cname" -Value $SyncClass.SyncHash."form$($x)".FindName($_.Name) #create a variale to hold the control/object
+        $controls += (Get-Variable -Name "form$($x)Control$($_.Name)").Name #add the control name to our array
+        $SyncClass.SyncHash.Add($cname, $SyncClass.SyncHash."form$($x)".FindName($_.Name)) #add the control directly to the hashtable
+    }
+}
+
+    }
+    catch {
+        <#Do this if a terminating exception happens#>
+    }
+
+
+    $Stackpanel.Children.Add($Label) | out-Null
+    $Stackpanel.Children.Add($TextBox) | out-Null
+
+    $global:OSDParameters = $Stackpanel
+
+    return $global:OSDParameters
+
+}
+Function NewUserControl(){
+    Param(
+        [String]$name,
+        [int]$number
+    )
+
+        $number = $number + 1
+        $global:UserControl = NewStackPanelControl  -Name $name -number $number
+        write-host "NewUserControl: $name" -ForegroundColor Magenta
+
+    return $global:UserControl
+
+}
+
 Set-ScriptIndex
 Set-ScriptContent
 
@@ -351,22 +423,47 @@ $formMainWindowControlScriptIndex.add_SelectionChanged({
     
         # David - No need to show Parameters if there are none
         if ($Global:OSDScriptBlock.Ast.ParamBlock.Parameters) {
-            
-            # David - Display the name of the script, then the Parameters
-            Write-Host -ForegroundColor Gray $Global:CurrentScript.Script
+            $global:OSDScriptParamCount = $Global:OSDScriptBlock.Ast.ParamBlock.Parameters.Count 
+            $Global:OSDScriptDebug = $true
 
-            $Global:OSDScriptBlock.Ast.ParamBlock.Parameters | ForEach-Object {
-                Write-Host -ForegroundColor DarkGray "Parameter: $($_.Name)"   
-            }
             if ($Global:OSDScriptDebug -eq $true) {
-                Write-Host -ForegroundColor DarkGray "Debug: $Global:OSDScriptDebug"
+                Write-Host -ForegroundColor Cyan "Debug: $Global:OSDScriptDebug"
                 $formMainWindow.Height = 600
+                $cpt=0
+                $global:OSDParameters
+                $Global:OSDScriptBlock.Ast.ParamBlock.Parameters | ForEach-Object {
+                    $cpt=$cpt+1
+                    Write-Host -ForegroundColor DarkGray "Parameter: $($_.Name)"   
+                    $userControl = NewUserControl -name $_.Name -number $cpt
+                    
+                    #Count chidren in stackpannel
+                    Write-Host $formMainWindowControlParameters.Children.count -ForegroundColor Red
+                    
+                    #Remove all children in stackpannel but don't work
+                    try {
+                    $formMainWindowControlParameters.Children.remove($formMainWindowControlParameters)
+                    }
+                    catch {
+                        Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
+                    }
+                    $formMainWindowControlParameters.Children.Add($userControl)
+                    Get-Variable -Name "$formMainWindowControl*"
 
-                
-            
+                }
+
+                <#for ($cpt=0; $cpt -lt $global:OSDScriptParamCount; $cpt++) {
+                    write-host $cpt -ForegroundColor yellow
+                    write-host $Global:OSDScriptBlock.Ast.ParamBlock.Parameters[$cpt].Name -ForegroundColor yellow
+                    $userControl = NewUserControl -name $Global:OSDScriptBlock.Ast.ParamBlock.Parameters[$cpt].Name -number $cpt
+                    $formMainWindowControlParameters.Children.Add($userControl) 
+                    $Global:OSDScriptBlock.Ast.ScriptRequirements
+
+                }#>
+    
+
             }
         }
-        #$Global:OSDScriptBlock.Ast.ScriptRequirements
+        $Global:OSDScriptBlock.Ast.ScriptRequirements
     }
 })
 #================================================
@@ -375,6 +472,9 @@ $formMainWindowControlScriptIndex.add_SelectionChanged({
 $formMainWindowControlStartButton.add_Click({
     #$formMainWindow.Close()
     #Show-PowershellWindow
+
+    Write-Host $formMainWindowControlTestvar.Text 
+    pause
 
     if ($Global:CurrentScript.Script -like "*.cmd") {
         Write-Host -ForegroundColor Cyan "CMD File"
@@ -405,21 +505,6 @@ $formMainWindowControlStartButton.add_Click({
             Write-Host -ForegroundColor DarkGray "Saving contents of `$Global:OSDScriptBlock` to $ScriptPath"
             $Global:OSDScriptBlock | Out-File $ScriptPath -Encoding utf8 -Width 2000 -Force
      
-            <#
-            $Global:OSDScriptBlock = [scriptblock]::Create((Get-Content $ScriptPath -Raw))
-    
-            $Global:OSDScriptBlock.Ast.findAll({$args[0] -is [System.Management.Automation.Language.ParamBlockAst]},$false) 
-            Write-Host -ForegroundColor DarkCyan "Finding script parameters with Ast"
-    
-            $Global:OSDScriptBlock.Ast.ParamBlock.Parameters | ForEach-Object {
-                Write-Host -ForegroundColor DarkGray "Parameter: $($_.Name)"   
-            }
-            $Global:OSDScriptBlock.Ast.ScriptRequirements
-            #>
-    
-            #$Global:XamlWindow.Close()
-            #Invoke-Command $Global:OSDScriptBlock
-            #Start-Process PowerShell.exe -ArgumentList "-NoExit Invoke-Command -ScriptBlock {$Global:OSDScriptBlock}"
     
             if ($global:PwshCore -eq $true) {
                 Write-Host -ForegroundColor DarkCyan "Start-Process -WorkingDirectory `"$env:TEMP`" -FilePath pwsh.exe -ArgumentList '-NoLogo -NoExit',`"-File `"$ScriptFile`"`""
