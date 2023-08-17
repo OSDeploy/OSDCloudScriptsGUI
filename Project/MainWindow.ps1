@@ -349,32 +349,14 @@ Function NewStackPanelControl(){
     $TextBox.Height  = "40"
     $TextBox.HorizontalAlignment="Center"
 
-    # try to add the new dynamic controls to the variable scope but don't work 
-    
-    try {
-        $controls = @()
-$xp = '[^a-zA-Z_0-9]' # All characters that are not a-Z, 0-9, or _
-foreach($x in $vx)
-{
-    $xaml = (Get-Variable -Name "xaml$($x)").Value #load the xaml we created earlier
-    $xaml.SelectNodes("//*[@Name]") | %{ #find all nodes with a "Name" attribute
-        $cname = "form$($x)Control$(($_.Name -replace $xp, '_'))"
-        Set-Variable -Name "$cname" -Value $SyncClass.SyncHash."form$($x)".FindName($_.Name) #create a variale to hold the control/object
-        $controls += (Get-Variable -Name "form$($x)Control$($_.Name)").Name #add the control name to our array
-        $SyncClass.SyncHash.Add($cname, $SyncClass.SyncHash."form$($x)".FindName($_.Name)) #add the control directly to the hashtable
-    }
-}
-
-    }
-    catch {
-        <#Do this if a terminating exception happens#>
-    }
-
-
     $Stackpanel.Children.Add($Label) | out-Null
     $Stackpanel.Children.Add($TextBox) | out-Null
 
     $global:OSDParameters = $Stackpanel
+    $cname = "formMainWindowControl$($name.Substring(1))"
+    Set-Variable -Name "$cname" -Value "formMainWindowControl$($name.Substring(1))" #create a variale to hold the control/object
+    $controls += (Get-Variable -Name "formMainWindowControl$($name.Substring(1))") #add the control name to our array
+    $SyncClass.SyncHash.Add($cname, $TextBox) #add the control directly to the hashtable
 
     return $global:OSDParameters
 
@@ -387,7 +369,7 @@ Function NewUserControl(){
 
         $number = $number + 1
         $global:UserControl = NewStackPanelControl  -Name $name -number $number
-        write-host "NewUserControl: $name" -ForegroundColor Magenta
+        #write-host "NewUserControl: $name" -ForegroundColor Magenta
 
     return $global:UserControl
 
@@ -437,7 +419,7 @@ $formMainWindowControlScriptIndex.add_SelectionChanged({
                     $userControl = NewUserControl -name $_.Name -number $cpt
                     
                     #Count chidren in stackpannel
-                    Write-Host $formMainWindowControlParameters.Children.count -ForegroundColor Red
+                    # Write-Host $formMainWindowControlParameters.Children.count -ForegroundColor Red
                     
                     #Remove all children in stackpannel but don't work
                     try {
@@ -473,7 +455,27 @@ $formMainWindowControlStartButton.add_Click({
     #$formMainWindow.Close()
     #Show-PowershellWindow
 
-    Write-Host $formMainWindowControlTestvar.Text 
+    # try to generalize the name of the control don't works
+    $Global:OSDParametersHash  = $null
+    $Global:OSDParametersHash = @{}
+
+    $Global:OSDScriptBlock.Ast.ParamBlock.Parameters | ForEach-Object {
+
+    $fname = $_.Name.ToString().SubString(1)
+
+        $variable = "write-host `$Global:SyncClass.SyncHash.formMainWindowControl" + $fname + ".Text"
+        $value = Invoke-Expression $variable
+        write-host "Paramter Name: " -ForegroundColor Cyan -NoNewline
+        Write-Host  $($fname) -ForegroundColor DarkBlue -NoNewline
+        write-host " Value : " -ForegroundColor Cyan -NoNewline 
+        write-host ($value)    -ForegroundColor yellow
+
+        
+        $Global:OSDParametersHash.add($fname,$value)
+        $Global:OSDParametersHash
+
+        
+    }
     pause
 
     if ($Global:CurrentScript.Script -like "*.cmd") {
