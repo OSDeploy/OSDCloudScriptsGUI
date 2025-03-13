@@ -27,22 +27,23 @@ $ProgressPreference = 'SilentlyContinue'
 
 $ScriptName = 'scripts.osdcloud.com'
 $ScriptVersion = '25.3.13.1'
-Write-Host -ForegroundColor Cyan "[i] $ScriptName version $ScriptVersion"
+
+Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] $ScriptName version $ScriptVersion"
 
 $ExecutionPolicy = Get-ExecutionPolicy
 if ($ExecutionPolicy -eq 'Restricted') {
-    Write-Host -ForegroundColor Red "[!] ExecutionPolicy is Restricted"
-    Write-Host -ForegroundColor Cyan "[i] Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force"
+    Write-Warning "[$(Get-Date -format G)] ExecutionPolicy is Restricted"
+    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force"
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force
 }
 
 $Repository = Invoke-RestMethod -Uri "https://api.github.com/repos/$Owner/$Repo"
 
 if ($Repository) {
-    Write-Host -ForegroundColor Green "[+] GitHub Repository $Owner/$Repo found"
+    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] GitHub Repository $Owner/$Repo found"
 }
 else {
-    Write-Host -ForegroundColor Red "[!] GitHub Repository $Owner/$Repo not found"
+    Write-Warning "[$(Get-Date -format G)] GitHub Repository $Owner/$Repo not found"
     Break
 }
 
@@ -63,10 +64,10 @@ else {
     Invoke-WebRequest -Uri $ScriptRepoUrl -OutFile $OutFile
 
     if (Test-Path $OutFile) {
-        Write-Host -ForegroundColor Green "[+] Repo $Repo downloaded to $OutFile"
+        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Repo $Repo downloaded to $OutFile"
     }
     else {
-        Write-Host -ForegroundColor Red "[!] Repo $Repo could not be downloaded"
+        Write-Warning "[$(Get-Date -format G)] Repo $Repo could not be downloaded"
         Break
     }
 
@@ -78,20 +79,20 @@ else {
     }
     Expand-Archive -Path $OutFile -DestinationPath $DestinationPath -Force
     if (Test-Path $DestinationPath) {
-        Write-Host -ForegroundColor Green "[+] Repo $Repo expanded to $DestinationPath"
+        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Repo $Repo expanded to $DestinationPath"
     }
     else {
-        Write-Host -ForegroundColor Red "[!] Repo $Repo could not be expanded to $DestinationPath"
+        Write-Warning "[$(Get-Date -format G)] Repo $Repo could not be expanded to $DestinationPath"
         Break
     }
 
     # Set Scripts Path
     $ScriptFiles = Get-ChildItem -Path $DestinationPath -Directory | Select-Object -First 1 -ExpandProperty FullName
     if (Test-Path $ScriptFiles) {
-        Write-Host -ForegroundColor Green "[+] Repo $Repo is set to $ScriptFiles"
+        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Repo $Repo is set to $ScriptFiles"
     }
     else {
-        Write-Host -ForegroundColor Red "[!] Repo $Repo could not be created at $ScriptFiles"
+        Write-Warning "[$(Get-Date -format G)] Repo $Repo could not be created at $ScriptFiles"
         Break
     }
 #endregion
@@ -113,10 +114,10 @@ else {
     Invoke-WebRequest -Uri $ScriptGuiUrl -OutFile $GUIOutFile
 
     if (Test-Path $GUIOutFile) {
-        Write-Host -ForegroundColor Green "[+] OSDCloudScriptsGUI downloaded to $GUIOutFile"
+        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] OSDCloudScriptsGUI downloaded to $GUIOutFile"
     }
     else {
-        Write-Host -ForegroundColor Red "[!] OSDCloudScriptsGUI could not be downloaded"
+        Write-Warning "[$(Get-Date -format G)] OSDCloudScriptsGUI could not be downloaded"
         Break
     }
 
@@ -128,17 +129,17 @@ else {
     }
     Expand-Archive -Path $GUIOutFile -DestinationPath $DestinationPath -Force
     if (Test-Path $DestinationPath) {
-        Write-Host -ForegroundColor Green "[+] OSDCloudScriptsGUI expanded to $DestinationPath"
+        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] OSDCloudScriptsGUI expanded to $DestinationPath"
     }
     else {
-        Write-Host -ForegroundColor Red "[!] OSDCloudScriptsGUI could not be expanded to $DestinationPath"
+        Write-Warning "[$(Get-Date -format G)] OSDCloudScriptsGUI could not be expanded to $DestinationPath"
         Break
     }
 
     # Set Excution Policy to RemoteSigned if $env:UserName is defaultuser0
     if ($env:UserName -eq 'defaultuser0') {
         Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-        Write-Host -ForegroundColor Green "[+] Set-ExecutionPolicy to RemoteSigned for $env:UserName"
+        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Set-ExecutionPolicy to RemoteSigned for $env:UserName"
     }
 
     $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
@@ -153,18 +154,18 @@ else {
         $SourceModuleRoot = Get-ChildItem -Path $DestinationPath -Directory | Select-Object -First 1 -ExpandProperty FullName
         Copy-Item -Path $SourceModuleRoot -Destination $ModulePath -Recurse -Force -ErrorAction SilentlyContinue
         if (Test-Path $ModulePath) {
-            Write-Host -ForegroundColor Green "[+] OSDCloudScriptsGUI Module copied to $ModulePath"
+            Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] OSDCloudScriptsGUI Module copied to $ModulePath"
         }
         else {
-            Write-Host -ForegroundColor Red "[!] OSDCloudScriptsGUI Module could not be copied to $ModulePath"
+            Write-Warning "[$(Get-Date -format G)] OSDCloudScriptsGUI Module could not be copied to $ModulePath"
             Break
         }
         try {
             Import-Module $ModulePath -Force -ErrorAction Stop
-            Write-Host -ForegroundColor Green "[+] Import-Module $ModulePath -Force"
+            Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Import-Module $ModulePath -Force"
         }
         catch {
-            Write-Host -ForegroundColor Red "[!] Import-Module $ModulePath -Force"
+            Write-Warning "[$(Get-Date -format G)] Import-Module $ModulePath -Force"
             Write-Error $_.Exception.Message
             Break
         }
@@ -173,22 +174,22 @@ else {
         $ModulePath = "$env:TEMP\OSDCloudScriptsGUI\OSDCloudScriptsGUI-main\OSDCloudScriptsGUI.psm1"
         try {
             Import-Module $ModulePath -Force -ErrorAction Stop
-            Write-Host -ForegroundColor Green "[+] Import-Module $ModulePath -Force"
+            Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Import-Module $ModulePath -Force"
         }
         catch {
-            Write-Host -ForegroundColor Red "[!] Import-Module $ModulePath -Force"
+            Write-Warning "[$(Get-Date -format G)] Import-Module $ModulePath -Force"
             Write-Error $_.Exception.Message
             Break
         }
     }
 
-    Write-Host -ForegroundColor Green "[+] Start-OSDCloudScriptsGUI -Path $ScriptFiles"
+    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Start-OSDCloudScriptsGUI -Path $ScriptFiles"
 #endregion
 
 
 if ($isAdmin) {
-    Write-Host -ForegroundColor Cyan "To start a new PowerShell session, type 'start powershell' and press enter"
-    Write-Host -ForegroundColor Cyan "Start-OSDCloudScriptsGUI can be run in the new PowerShell window"
+    Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] To start a new PowerShell session, type 'start powershell' and press enter"
+    Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] Start-OSDCloudScriptsGUI can be run in the new PowerShell window"
 }
 
 Start-OSDCloudScriptsGUI -Path $ScriptFiles

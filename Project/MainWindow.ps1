@@ -143,11 +143,11 @@ foreach($x in $vx)
 ############################
 ## FORMS AND CONTROLS OUTPUT
 ############################
-<# Write-Host -ForegroundColor Cyan "The following forms were created:"
+<# Write-Host -ForegroundColor Cyan "[$(Get-Date -format G)] The following forms were created:"
 $forms | %{ Write-Host -ForegroundColor Yellow "  `$$_"} #output all forms to screen
 if($controls.Count -gt 0){
     Write-Host ""
-    Write-Host -ForegroundColor Cyan "The following controls were created:"
+    Write-Host -ForegroundColor Cyan "[$(Get-Date -format G)] The following controls were created:"
     $controls | %{ Write-Host -ForegroundColor Yellow "  `$$_"} #output all named controls to screen
 } #>
 
@@ -340,14 +340,14 @@ $formMainWindowControlScriptIndex.add_SelectionChanged({
         $ScriptFile = 'OSDScript.ps1'
         $ScriptPath = "$env:TEMP\$ScriptFile"
         
-        #Write-Host -ForegroundColor DarkGray "Saving contents of `$Global:OSDScriptBlock` to $ScriptPath"
+        #Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Saving contents of `$Global:OSDScriptBlock` to $ScriptPath"
         $Global:OSDScriptBlock | Out-File $ScriptPath -Encoding utf8 -Width 2000 -Force
     
         $Global:OSDScriptBlock = [scriptblock]::Create((Get-Content $ScriptPath -Raw))
     
         $Global:OSDScriptBlock.Ast.findAll({$args[0] -is [System.Management.Automation.Language.ParamBlockAst]},$false)
         # Commenting out, not needed
-        #Write-Host -ForegroundColor DarkCyan "Finding script parameters with Ast"
+        #Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] Finding script parameters with Ast"
     
         # David - No need to show Parameters if there are none
         if ($Global:OSDScriptBlock.Ast.ParamBlock.Parameters) {
@@ -394,7 +394,7 @@ $formMainWindowControlStartButton.add_Click({
             Review these lines
     
             if ($ScriptSelectionControl.SelectedValue -like "*#Requires -PSEdition Core*")  {
-                 Write-Host -ForegroundColor DarkCyan "PowerShell Core detected"
+                 Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] PowerShell Core detected"
                  $global:PwshCore = $true
              }
             #>
@@ -402,14 +402,14 @@ $formMainWindowControlStartButton.add_Click({
             $ScriptFile = 'OSDScript.ps1'
             $ScriptPath = "$env:TEMP\$ScriptFile"
             
-            Write-Host -ForegroundColor DarkGray "Saving contents of `$Global:OSDScriptBlock` to $ScriptPath"
+            Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Saving contents of `$Global:OSDScriptBlock` to $ScriptPath"
             $Global:OSDScriptBlock | Out-File $ScriptPath -Encoding utf8 -Width 2000 -Force
      
             <#
             $Global:OSDScriptBlock = [scriptblock]::Create((Get-Content $ScriptPath -Raw))
     
             $Global:OSDScriptBlock.Ast.findAll({$args[0] -is [System.Management.Automation.Language.ParamBlockAst]},$false) 
-            Write-Host -ForegroundColor DarkCyan "Finding script parameters with Ast"
+            Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] Finding script parameters with Ast"
     
             $Global:OSDScriptBlock.Ast.ParamBlock.Parameters | ForEach-Object {
                 Write-Host -ForegroundColor DarkGray "Parameter: $($_.Name)"   
@@ -422,11 +422,11 @@ $formMainWindowControlStartButton.add_Click({
             #Start-Process PowerShell.exe -ArgumentList "-NoExit Invoke-Command -ScriptBlock {$Global:OSDScriptBlock}"
     
             if ($global:PwshCore -eq $true) {
-                Write-Host -ForegroundColor DarkCyan "Start-Process -WorkingDirectory `"$env:TEMP`" -FilePath pwsh.exe -ArgumentList '-NoLogo -NoExit',`"-File `"$ScriptFile`"`""
+                Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] Start-Process -WorkingDirectory `"$env:TEMP`" -FilePath pwsh.exe -ArgumentList '-NoLogo -NoExit',`"-File `"$ScriptFile`"`""
                 Start-Process -WorkingDirectory "$env:TEMP" -FilePath pwsh.exe -ArgumentList '-NoLogo -NoExit',"-File `"$ScriptFile`""
             }
             else {
-                Write-Host -ForegroundColor DarkCyan "Start-Process -WorkingDirectory `"$env:TEMP`" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',`"-File `"$ScriptFile`"`""
+                Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] Start-Process -WorkingDirectory `"$env:TEMP`" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',`"-File `"$ScriptFile`"`""
                 if ($Global:OSDScriptBlock -match '-RunAsAdministrator') {
                     # Want to add a RunAs, but that will mess up Temp since that path will change maybe
                     Start-Process -WorkingDirectory "$env:TEMP" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',"-File `"$ScriptFile`""
@@ -435,7 +435,7 @@ $formMainWindowControlStartButton.add_Click({
                     Start-Process -WorkingDirectory "$env:TEMP" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',"-File `"$ScriptFile`""
                 }
             }
-            #Write-Host -ForegroundColor DarkCyan "Start-Process -WorkingDirectory `"$env:TEMP`" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',`"-File `"$ScriptFile`"`""
+            #Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] Start-Process -WorkingDirectory `"$env:TEMP`" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',`"-File `"$ScriptFile`"`""
             #Start-Process -WorkingDirectory "$env:TEMP" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',"-File `"$ScriptFile`""
         }
     }
