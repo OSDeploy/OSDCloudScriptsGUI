@@ -46,11 +46,11 @@ if ($ExecutionPolicy -eq 'Restricted') {
 $Repository = Invoke-RestMethod -Uri "https://api.github.com/repos/$Owner/$Repo"
 
 if ($Repository) {
-    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Found Git repository at $Owner/$Repo"
+    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] repository $Repository connection success"
 }
 else {
-    Write-Warning "[$(Get-Date -format G)] GitHub Repository $Owner/$Repo not found"
-    Break
+    Write-Warning "[$(Get-Date -format G)] repository $Repository connection failed"
+    break
 }
 #=================================================
 # Script Repository Download
@@ -65,14 +65,15 @@ if (Test-Path $OutFile) {
 }
 
 # Download Zip file
+Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] connecting to $ScriptRepoUrl"
 Invoke-WebRequest -Uri $ScriptRepoUrl -OutFile $OutFile
 
 if (Test-Path $OutFile) {
-    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Repo $Repo downloaded to $OutFile"
+    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] repository was downloaded to $OutFile"
 }
 else {
-    Write-Warning "[$(Get-Date -format G)] Repo $Repo could not be downloaded"
-    Break
+    Write-Warning "[$(Get-Date -format G)] repository could not be downloaded"
+    break
 }
 #=================================================
 # Expand Zip file
@@ -83,21 +84,21 @@ if (Test-Path $DestinationPath) {
 }
 Expand-Archive -Path $OutFile -DestinationPath $DestinationPath -Force
 if (Test-Path $DestinationPath) {
-    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Repo $Repo expanded to $DestinationPath"
+    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] downloaded repository expanded to $DestinationPath"
 }
 else {
-    Write-Warning "[$(Get-Date -format G)] Repo $Repo could not be expanded to $DestinationPath"
-    Break
+    Write-Warning "[$(Get-Date -format G)] downloaded repository could not be expanded to $DestinationPath"
+    break
 }
 #=================================================
 # Set Scripts Path
 $ScriptFiles = Get-ChildItem -Path $DestinationPath -Directory | Select-Object -First 1 -ExpandProperty FullName
 if (Test-Path $ScriptFiles) {
-    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Repo $Repo is set to $ScriptFiles"
+    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] downloaded repository created at $ScriptFiles"
 }
 else {
-    Write-Warning "[$(Get-Date -format G)] Repo $Repo could not be created at $ScriptFiles"
-    Break
+    Write-Warning "[$(Get-Date -format G)] downloaded repository could not be created at $ScriptFiles"
+    break
 }
 #=================================================
 # Download GUI
@@ -115,11 +116,11 @@ if (Test-Path $GUIOutFile) {
 Invoke-WebRequest -Uri $ScriptGuiUrl -OutFile $GUIOutFile
 
 if (Test-Path $GUIOutFile) {
-    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] OSDCloudScriptsGUI downloaded to $GUIOutFile"
+    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] frontend downloaded to $GUIOutFile"
 }
 else {
-    Write-Warning "[$(Get-Date -format G)] OSDCloudScriptsGUI could not be downloaded"
-    Break
+    Write-Warning "[$(Get-Date -format G)] frontend could not be downloaded to $GUIOutFile"
+    break
 }
 #=================================================
 # Expand Zip file
@@ -130,11 +131,11 @@ if (Test-Path $DestinationPath) {
 }
 Expand-Archive -Path $GUIOutFile -DestinationPath $DestinationPath -Force
 if (Test-Path $DestinationPath) {
-    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] OSDCloudScriptsGUI expanded to $DestinationPath"
+    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] frontend expanded to $DestinationPath"
 }
 else {
-    Write-Warning "[$(Get-Date -format G)] OSDCloudScriptsGUI could not be expanded to $DestinationPath"
-    Break
+    Write-Warning "[$(Get-Date -format G)] frontend could not be expanded to $DestinationPath"
+    break
 }
 #=================================================
 # Set Excution Policy to RemoteSigned if $env:UserName is defaultuser0
@@ -156,30 +157,30 @@ if ($isAdmin) {
     $SourceModuleRoot = Get-ChildItem -Path $DestinationPath -Directory | Select-Object -First 1 -ExpandProperty FullName
     Copy-Item -Path $SourceModuleRoot -Destination $ModulePath -Recurse -Force -ErrorAction SilentlyContinue
     if (Test-Path $ModulePath) {
-        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] OSDCloudScriptsGUI Module copied to $ModulePath"
+        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] powershell module copied to $ModulePath"
     }
     else {
-        Write-Warning "[$(Get-Date -format G)] OSDCloudScriptsGUI Module could not be copied to $ModulePath"
-        Break
+        Write-Warning "[$(Get-Date -format G)] powershell module could not be copied to $ModulePath"
+        break
     }
     try {
         Import-Module $ModulePath -Force -ErrorAction Stop
-        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Import-Module $ModulePath -Force"
+        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] importing powershell module at $ModulePath"
     }
     catch {
-        Write-Warning "[$(Get-Date -format G)] Import-Module $ModulePath -Force"
+        Write-Warning "[$(Get-Date -format G)] could not import powershell module at $ModulePath"
         Write-Error $_.Exception.Message
-        Break
+        break
     }
 }
 else {
     $ModulePath = "$env:TEMP\OSDCloudScriptsGUI\OSDCloudScriptsGUI-main\OSDCloudScriptsGUI.psm1"
     try {
         Import-Module $ModulePath -Force -ErrorAction Stop
-        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] Import-Module $ModulePath -Force"
+        Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] importing powershell module at $ModulePath"
     }
     catch {
-        Write-Warning "[$(Get-Date -format G)] Import-Module $ModulePath -Force"
+        Write-Warning "[$(Get-Date -format G)] could not import powershell module at $ModulePath"
         Write-Error $_.Exception.Message
         Break
     }
