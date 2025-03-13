@@ -8,7 +8,7 @@
         BorderThickness="0"
         RenderTransformOrigin="0.5,0.5"
         WindowStartupLocation = "CenterScreen"
-        Title="OSDCloudScriptsGUI" Height="400" Width="800">
+        Title="OSDScripts" Height="400" Width="800">
     <Window.Resources>
         <ResourceDictionary>
             <Style TargetType="{x:Type Button}">
@@ -45,7 +45,7 @@
                              Value="True">
                         <!-- Windows 11 Theme Dark Blue -->
                         <Setter Property="Background"
-                                Value="#0096D6" />
+                                Value="#024AD8" />
                     </Trigger>
                     <Trigger Property="IsMouseOver"
                              Value="False">
@@ -169,7 +169,7 @@
                        Content="Script"
                        FontSize="18"
                        FontWeight="Bold"
-                       Foreground="#0096D6"
+                       Foreground="#024AD8"
                        Margin="0,5,0,5"
                        Padding="2"
                        Width="60"
@@ -245,7 +245,7 @@
                        Content="Name"
                        FontSize="16"
                        FontWeight="Bold"
-                       Foreground="#0096D6"
+                       Foreground="#024AD8"
                        Margin="0,5,0,5"
                        Padding="2"
                        Width="50"
@@ -262,7 +262,7 @@
                        Content="Search"
                        FontSize="16"
                        FontWeight="Bold"
-                       Foreground="#0096D6"
+                       Foreground="#024AD8"
                        Margin="5,5,0,5"
                        Padding="2"
                        Width="80"
