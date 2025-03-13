@@ -9,7 +9,7 @@ function Start-OSDCloudScriptsGUI {
     #   Set Global Variables
     #================================================
     $Global:OSDPadBranding = @{
-        Title = 'OSDCloudScriptsGUI'
+        Title = 'OSDScripts'
         Color = '#024AD8'
     }
     #=================================================
