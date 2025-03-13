@@ -46,10 +46,10 @@ if ($ExecutionPolicy -eq 'Restricted') {
 $Repository = Invoke-RestMethod -Uri "https://api.github.com/repos/$Owner/$Repo"
 
 if ($Repository) {
-    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] repository $Repository connection success"
+    Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] success connecting to https://api.github.com/repos/$Owner/$Repo"
 }
 else {
-    Write-Warning "[$(Get-Date -format G)] repository $Repository connection failed"
+    Write-Warning "[$(Get-Date -format G)] failure connecting to https://api.github.com/repos/$Owner/$Repo"
     break
 }
 #=================================================
