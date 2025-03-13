@@ -20,7 +20,7 @@
 [CmdletBinding()]
 param(
     [System.String] $Owner = 'OSDeploy',
-    [System.String] $Repo = 'OSDCloudScripts'
+    [System.String] $Repo = 'osdworkspace-scripts'
 )
 # Set ProgressPreference to SilentlyContinue
 $ProgressPreference = 'SilentlyContinue'
