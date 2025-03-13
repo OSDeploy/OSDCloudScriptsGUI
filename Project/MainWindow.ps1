@@ -445,7 +445,7 @@ $formMainWindowControlStartButton.add_Click({
 #================================================
 [string]$ModuleVersion = Get-Module -Name OSDCloudScriptsGUI | Sort-Object -Property Version | Select-Object -ExpandProperty Version -Last 1
 $LocalRepository = $Global:OSDCloudScriptsGUI | Select-Object -First 1 -ExpandProperty LocalRepository
-$formMainWindow.Title = "OSDCloudScriptsGUI at $LocalRepository"
+$formMainWindow.Title = "OSDScripts at $LocalRepository"
 #================================================
 #   Hide Windows
 #================================================
