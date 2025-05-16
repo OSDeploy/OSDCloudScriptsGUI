@@ -426,17 +426,15 @@ $formMainWindowControlStartButton.add_Click({
                 Start-Process -WorkingDirectory "$env:TEMP" -FilePath pwsh.exe -ArgumentList '-NoLogo -NoExit',"-File `"$ScriptFile`""
             }
             else {
-                Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] Start-Process -WorkingDirectory `"$env:TEMP`" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',`"-File `"$ScriptFile`"`""
-                if ($Global:OSDScriptBlock -match '-RunAsAdministrator') {
-                    # Want to add a RunAs, but that will mess up Temp since that path will change maybe
+                if (($PSVersionTable.PSVersion.Major -eq 5) -or ($Global:OSDScriptBlock -match '#Requires -Version 5')) {
+                    Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] Start-Process -WorkingDirectory `"$env:TEMP`" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',`"-File `"$ScriptFile`"`""
                     Start-Process -WorkingDirectory "$env:TEMP" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',"-File `"$ScriptFile`""
                 }
-                else {
-                    Start-Process -WorkingDirectory "$env:TEMP" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',"-File `"$ScriptFile`""
+                elseif (($PSVersionTable.PSVersion.Major -eq 7) -or ($Global:OSDScriptBlock -match '#Requires -Version 7')) {
+                    Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] Start-Process -WorkingDirectory `"$env:TEMP`" -FilePath pwsh.exe -ArgumentList '-NoLogo -NoExit',`"-File `"$ScriptFile`"`""
+                    Start-Process -WorkingDirectory "$env:TEMP" -FilePath pwsh.exe -ArgumentList '-NoLogo -NoExit',"-File `"$ScriptFile`""
                 }
             }
-            #Write-Host -ForegroundColor DarkCyan "[$(Get-Date -format G)] Start-Process -WorkingDirectory `"$env:TEMP`" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',`"-File `"$ScriptFile`"`""
-            #Start-Process -WorkingDirectory "$env:TEMP" -FilePath PowerShell.exe -ArgumentList '-NoLogo -NoExit',"-File `"$ScriptFile`""
         }
     }
 })

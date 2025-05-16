@@ -57,6 +57,7 @@ function Start-OSDCloudScriptsGUI {
     #=================================================
     #   OSDCloudScriptsGUI.ps1
     #=================================================
+    Get-Variable | Out-GridView
     & "$($MyInvocation.MyCommand.Module.ModuleBase)\Project\MainWindow.ps1"
     #=================================================
 }
