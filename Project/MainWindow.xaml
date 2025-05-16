@@ -166,13 +166,13 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
                     <Label Name="ScriptLabel"
-                       Content="Script"
+                       Content="file"
                        FontSize="18"
                        FontWeight="Bold"
                        Foreground="#024AD8"
                        Margin="0,5,0,5"
                        Padding="2"
-                       Width="60"
+                       Width="40"
                        FlowDirection="LeftToRight" />
                     <ComboBox Name="ScriptIndex"
                           FontSize="16"
@@ -192,12 +192,13 @@
               Stretch="Uniform">
             </Line>
 <!-- Row 4 -->
-            <StackPanel Grid.Row="2"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top">
-                <StackPanel Orientation="Horizontal"
+            <StackPanel Grid.Row="4"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+                    <!-- Add content here if needed -->
                 </StackPanel>
             </StackPanel>
 <!-- Row 5 GridLine -->
@@ -242,13 +243,13 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
                     <Label Name="FilterLabel"
-                       Content="Name"
+                       Content="filename"
                        FontSize="16"
                        FontWeight="Bold"
                        Foreground="#024AD8"
                        Margin="0,5,0,5"
                        Padding="2"
-                       Width="50"
+                       Width="70"
                        FlowDirection="LeftToRight" />
                     <TextBox Name="ScriptFilter"
                         Text=""
@@ -259,7 +260,7 @@
                         Padding="10,2"
                         Width = "Auto" />
                     <Label Name="ContainsLabel"
-                       Content="Search"
+                       Content="content"
                        FontSize="16"
                        FontWeight="Bold"
                        Foreground="#024AD8"
@@ -289,10 +290,10 @@
 <!-- Row 10 -->
             <Button Grid.Row="10"
                 Name="StartButton"
-                Content="Start"
+                Content="run"
                 FontSize="18"
                 Foreground="White"
-                Height="40"
+                Height="35"
                 Width="130"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom" />

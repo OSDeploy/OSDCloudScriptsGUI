@@ -15,7 +15,6 @@
 
 .NOTES
     Author: David Segura
-    Modified: 2023-09-28
 #>
 [CmdletBinding()]
 param(
@@ -28,7 +27,7 @@ Write-Verbose "[$((Get-Date).ToString('HH:mm:ss'))][$($MyInvocation.MyCommand)] 
 #=================================================
 # Script Information
 $ScriptName = 'scripts.osdcloud.com'
-$ScriptVersion = '25.3.13.1'
+$ScriptVersion = '25.5.16.1'
 Write-Host -ForegroundColor DarkGray "[$(Get-Date -format G)] $ScriptName version $ScriptVersion"
 #=================================================
 # Script Preferences
